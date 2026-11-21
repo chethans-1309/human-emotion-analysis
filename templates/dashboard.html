@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-5">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </h1>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ emotion_stats|sum(attribute='count') }}</div>
+                <div class="stat-label">Total Predictions</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ emotion_stats|length }}</div>
+                <div class="stat-label">Emotions Detected</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ (emotion_stats|max(attribute='count')).emotion if emotion_stats else 'N/A' }}</div>
+                <div class="stat-label">Most Common</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ session.username }}</div>
+                <div class="stat-label">Username</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emotion Distribution -->
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-chart-pie me-2"></i>Emotion Distribution
+                    </h4>
+                    {% if emotion_stats %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Emotion</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in emotion_stats %}
+                                <tr>
+                                    <td>{{ stat.emotion }}</td>
+                                    <td>{{ stat.count }}</td>
+                                    <td>{{ (stat.count / (emotion_stats|sum(attribute='count')) * 100)|round(1) }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center">No emotion data available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-history me-2"></i>Recent Predictions
+                    </h4>
+                    {% if recent_emotions %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Emotion</th>
+                                    <th>Confidence</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for emotion in recent_emotions %}
+                                <tr>
+                                    <td>{{ emotion.emotion }}</td>
+                                    <td>{{ (emotion.confidence * 100)|round(1) }}%</td>
+                                    <td>{{ emotion.timestamp }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center">No recent predictions.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-4">Quick Actions</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('emotion') }}" class="btn btn-gradient btn-lg w-100 mb-3">
+                                <i class="fas fa-smile me-2"></i>Emotion Detection
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('movement') }}" class="btn btn-gradient btn-lg w-100 mb-3">
+                                <i class="fas fa-running me-2"></i>Movement Tracking
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('activity') }}" class="btn btn-gradient btn-lg w-100 mb-3">
+                                <i class="fas fa-user-check me-2"></i>Activity Detection
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Emotion Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-smile me-2"></i>Emotion Detection
+                    </h2>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="detection-option" onclick="selectOption('image')">
+                                    <i class="fas fa-image fa-3x mb-3"></i>
+                                    <h5>Upload Image</h5>
+                                    <p>Analyze emotions from a single image</p>
+                                    <input type="radio" name="detection_type" value="image" id="image_radio" class="d-none">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="detection-option" onclick="selectOption('live')">
+                                    <i class="fas fa-camera fa-3x mb-3"></i>
+                                    <h5>Live Detection</h5>
+                                    <p>Real-time emotion analysis</p>
+                                    <input type="radio" name="detection_type" value="live" id="live_radio" class="d-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div id="image_upload" class="upload-section d-none">
+                            <div class="mb-3">
+                                <label for="image_file" class="form-label">Select Image</label>
+                                <input type="file" class="form-control" id="image_file" name="image_file" accept="image/*">
+                            </div>
+                        </div>
+
+                        
+
+                        <!-- Live Detection -->
+                        <div id="live_detection" class="upload-section d-none">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Live emotion detection will start when you click submit.
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-gradient btn-lg">Start Analysis</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5><i class="fas fa-info-circle me-2"></i>Instructions</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Ensure good lighting for accurate detection</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Face should be clearly visible</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Supported emotions: Happy, Sad, Angry, Surprise, Fear, Disgust, Neutral</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Results will be saved to your dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function selectOption(type) {
+        // Reset all options
+        document.querySelectorAll('.detection-option').forEach(opt => {
+            opt.style.background = 'rgba(255, 255, 255, 0.1)';
+        });
+        
+        // Hide all upload sections
+        document.querySelectorAll('.upload-section').forEach(section => {
+            section.classList.add('d-none');
+        });
+        
+        // Activate selected option
+        const selectedOption = document.querySelector(`[onclick="selectOption('${type}')"]`);
+        selectedOption.style.background = 'rgba(255, 255, 255, 0.2)';
+        
+        // Check the radio button
+        document.getElementById(`${type}_radio`).checked = true;
+        
+        // Show corresponding upload section
+        document.getElementById(`${type}_upload`).classList.remove('d-none');
+    }
+</script>
+{% endblock %}

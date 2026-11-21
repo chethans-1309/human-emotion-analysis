@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Emotion Results{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-chart-bar me-2"></i>Emotion Analysis Results
+                    </h2>
+                    
+                    <!-- Success Message -->
+                    {% if results.message %}
+                    <div class="alert alert-success text-center">
+                        <i class="fas fa-check-circle me-2"></i>{{ results.message }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Processed Image -->
+                    {% if results.processed_image_path %}
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <div class="chart-container">
+                                <h4 class="text-center mb-4">Processed Image</h4>
+                                <div class="text-center">
+                                    <img src="{{ url_for('static', filename=results.processed_image_path.replace('static/', '')) }}" 
+                                         alt="Processed Image" 
+                                         class="img-fluid rounded" 
+                                         style="max-height: 500px; border: 2px solid #4ecdc4;">
+                                    <p class="text-muted mt-2">Detected {{ results.faces_detected }} face(s)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Current Session Results -->
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <h4 class="text-center mb-4">Current Session Distribution</h4>
+                                {% if current_pie_chart %}
+                                <img src="{{ current_pie_chart }}" alt="Emotion Pie Chart" class="img-fluid">
+                                {% else %}
+                                <p class="text-center">No data available for current session.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <h4 class="text-center mb-4">Emotion Statistics</h4>
+                                {% if results.emotions %}
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Emotion</th>
+                                                <th>Count</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for emotion, count in results.emotions.items() %}
+                                            <tr>
+                                                <td>{{ emotion }}</td>
+                                                <td>{{ count }}</td>
+                                                <td>{{ (count / results.emotions.values()|sum * 100)|round(1) }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="table-info">
+                                                <th>Total</th>
+                                                <th>{{ results.emotions.values()|sum }}</th>
+                                                <th>100%</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <p class="text-center">No emotion data available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Emotion Analysis for Images -->
+                    {% if results.emotion_details %}
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <div class="chart-container">
+                                <h4 class="text-center mb-4">Detailed Face Analysis</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Face #</th>
+                                                <th>Emotion</th>
+                                                <th>Confidence</th>
+                                                <th>Position</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for detail in results.emotion_details %}
+                                            <tr>
+                                                <td>{{ loop.index }}</td>
+                                                <td>
+                                                    <span class="badge bg-primary">{{ detail.emotion }}</span>
+                                                </td>
+                                                <td>{{ "%.1f"|format(detail.confidence) }}%</td>
+                                                <td>
+                                                    <small>X: {{ detail.bbox[0] }}, Y: {{ detail.bbox[1] }}<br>
+                                                    W: {{ detail.bbox[2] }}, H: {{ detail.bbox[3] }}</small>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Video Statistics -->
+                    {% if results.total_frames %}
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <div class="chart-container">
+                                <h4 class="text-center mb-4">Video Analysis Summary</h4>
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <div class="stat-card">
+                                            <div class="stat-number">{{ results.total_frames }}</div>
+                                            <div class="stat-label">Total Frames</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-card">
+                                            <div class="stat-number">{{ results.processed_frames }}</div>
+                                            <div class="stat-label">Processed Frames</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-card">
+                                            <div class="stat-number">{{ results.emotions.values()|sum }}</div>
+                                            <div class="stat-label">Emotions Detected</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Overall Statistics -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="chart-container">
+                                <h4 class="text-center mb-4">Overall Emotion Trends</h4>
+                                {% if overall_line_chart %}
+                                <img src="{{ overall_line_chart }}" alt="Overall Emotion Trends" class="img-fluid">
+                                {% else %}
+                                <p class="text-center">No historical data available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-5">
+                        <a href="{{ url_for('emotion') }}" class="btn btn-gradient me-3">
+                            <i class="fas fa-redo me-2"></i>New Analysis
+                        </a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    margin: 0.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4ecdc4;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.4em 0.6em;
+}
+</style>
+{% endblock %}

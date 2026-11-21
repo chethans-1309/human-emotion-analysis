@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Live Emotion Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card glass-effect">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-camera me-2"></i>Live Emotion Detection
+                        </h2>
+                        <p class="text-light">Real-time facial emotion analysis using OpenCV</p>
+                    </div>
+
+                    <!-- Status Display -->
+                    <div class="status-container mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stat-card mb-3">
+                                    <h6 class="stat-label">Detection Status</h6>
+                                    <div class="stat-number" id="detectionStatus">Ready</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card mb-3">
+                                    <h6 class="stat-label">Session ID</h6>
+                                    <div class="stat-number">{{ session_id }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Preview Placeholder -->
+                    <div class="camera-preview mb-4">
+                        <div class="preview-placeholder">
+                            <i class="fas fa-window-restore fa-5x mb-3 opacity-50"></i>
+                            <h5>OpenCV Window</h5>
+                            <p class="text-light">Emotion detection will open in a separate window</p>
+                        </div>
+                    </div>
+
+                    <!-- Single Start Button -->
+                    <div class="control-panel mb-4">
+                        <button class="btn btn-success btn-lg" onclick="startEmotionDetection()" id="startBtn">
+                            <i class="fas fa-play-circle me-2"></i>Start Emotion Detection
+                        </button>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="instructions alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Important Instructions:</h6>
+                        <ul class="mb-0 text-start">
+                            <li>Click "Start Emotion Detection" to open the OpenCV window</li>
+                            <li>The detection will run in a separate desktop window</li>
+                            <li><strong>Press <kbd>Q</kbd> in the OpenCV window to stop detection</strong></li>
+                            <li>Ensure camera permissions are granted</li>
+                            <li>Keep your face visible and well-lit for best results</li>
+                            <li>Detection results will be automatically saved when you press Q</li>
+                            <li>After pressing Q, you can view results on the results page</li>
+                        </ul>
+                    </div>
+
+                    <!-- Session Info -->
+                    <div class="session-info mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <span>Started: </span>
+                                    <strong id="startTime">-</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <i class="fas fa-chart-bar me-2"></i>
+                                    <span>Results: </span>
+                                    <strong><a href="{{ url_for('emotion_result') }}" class="text-warning">View Results</a></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.camera-preview {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 3rem;
+    margin: 2rem 0;
+}
+
+.preview-placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4ecdc4;
+}
+
+.control-panel {
+    padding: 1.5rem;
+}
+
+.instructions {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+.instructions ul {
+    padding-left: 1.5rem;
+}
+
+.instructions li {
+    margin-bottom: 0.5rem;
+}
+
+.session-info {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn {
+    padding: 15px 40px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.status-active {
+    color: #4ecdc4;
+    animation: pulse 2s infinite;
+}
+
+.status-inactive {
+    color: #ff6b6b;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let detectionProcess = null;
+let sessionStartTime = null;
+
+function startEmotionDetection() {
+    const startBtn = document.getElementById('startBtn');
+    const statusElement = document.getElementById('detectionStatus');
+    const startTimeElement = document.getElementById('startTime');
+    
+    // Update UI
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
+    statusElement.textContent = 'Starting...';
+    statusElement.className = 'stat-number status-active';
+    
+    // Set start time
+    sessionStartTime = new Date();
+    startTimeElement.textContent = sessionStartTime.toLocaleTimeString();
+    
+    // Start the emotion detection process
+    fetch('/emotion/start_live_detection', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            session_id: '{{ session_id }}'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            statusElement.textContent = 'Running - Press Q to stop';
+            
+            // Show success message
+            showNotification('Emotion detection started! Look for the OpenCV window. Press Q to stop.', 'success');
+            
+            // Check detection status periodically
+            detectionProcess = setInterval(checkDetectionStatus, 3000);
+            
+        } else {
+            throw new Error(data.message || 'Failed to start detection');
+        }
+    })
+    .catch(error => {
+        console.error('Error starting detection:', error);
+        statusElement.textContent = 'Error';
+        statusElement.className = 'stat-number status-inactive';
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Emotion Detection';
+        showNotification('Failed to start emotion detection: ' + error.message, 'error');
+    });
+}
+
+function checkDetectionStatus() {
+    fetch('/emotion/check_status?session_id={{ session_id }}')
+    .then(response => response.json())
+    .then(data => {
+        const statusElement = document.getElementById('detectionStatus');
+        const startBtn = document.getElementById('startBtn');
+        
+        if (data.status === 'running' || data.status === 'starting') {
+            // Detection is still running
+            statusElement.textContent = 'Running - Press Q to stop';
+        } else if (data.status === 'completed' || data.status === 'stopping') {
+            // Detection has stopped
+            statusElement.textContent = 'Completed';
+            statusElement.className = 'stat-number';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Emotion Detection';
+            
+            if (detectionProcess) {
+                clearInterval(detectionProcess);
+                detectionProcess = null;
+            }
+            
+            showNotification('Emotion detection completed! Results have been saved.', 'success');
+        } else if (data.status === 'error') {
+            // Error occurred
+            statusElement.textContent = 'Error';
+            statusElement.className = 'stat-number status-inactive';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Emotion Detection';
+            
+            if (detectionProcess) {
+                clearInterval(detectionProcess);
+                detectionProcess = null;
+            }
+            
+            showNotification('Error in emotion detection: ' + (data.error || 'Unknown error'), 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error checking status:', error);
+    });
+}
+
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '1000';
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Live Emotion Detection page loaded');
+    
+    // Check if we have a session ID
+    if (!'{{ session_id }}') {
+        showNotification('No session ID found. Please go back and try again.', 'error');
+        document.getElementById('startBtn').disabled = true;
+    }
+});
+
+// Clean up when leaving page
+window.addEventListener('beforeunload', function() {
+    if (detectionProcess) {
+        clearInterval(detectionProcess);
+    }
+});
+</script>
+{% endblock %}

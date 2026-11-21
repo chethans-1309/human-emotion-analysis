@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card glass-effect">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="icon-container mb-3">
+                            <i class="fas fa-user-plus fa-3x text-gradient"></i>
+                        </div>
+                        <h2 class="card-title fw-bold">Create Account</h2>
+                        <p class="text-light">Join our AI Behavior Analysis platform</p>
+                    </div>
+                    
+                    <form method="POST" id="registerForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Username
+                            </label>
+                            <input type="text" 
+                                   class="form-control glass-input" 
+                                   id="username" 
+                                   name="username" 
+                                   required
+                                   placeholder="Enter your username">
+                            <div class="form-text text-light">Choose a unique username</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input type="email" 
+                                   class="form-control glass-input" 
+                                   id="email" 
+                                   name="email" 
+                                   required
+                                   placeholder="Enter your email">
+                            <div class="form-text text-light">We'll never share your email</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input type="password" 
+                                   class="form-control glass-input" 
+                                   id="password" 
+                                   name="password" 
+                                   required
+                                   placeholder="Create a password"
+                                   minlength="6">
+                            <div class="form-text text-light">Minimum 6 characters</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Confirm Password
+                            </label>
+                            <input type="password" 
+                                   class="form-control glass-input" 
+                                   id="confirm_password" 
+                                   name="confirm_password" 
+                                   required
+                                   placeholder="Confirm your password">
+                            <div class="invalid-feedback" id="passwordError">
+                                Passwords do not match
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label text-light" for="terms">
+                                I agree to the <a href="#" class="text-warning">Terms of Service</a> and <a href="#" class="text-warning">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-gradient btn-lg fw-bold">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-light">Already have an account? 
+                            <a href="{{ url_for('login') }}" class="text-warning fw-bold text-decoration-none">
+                                Sign In Here
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Social Login Options -->
+                    <div class="mt-4">
+                        <div class="divider">
+                            <span class="divider-text text-light">Or register with</span>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <button class="btn btn-outline-light w-100">
+                                    <i class="fab fa-google"></i>
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-light w-100">
+                                    <i class="fab fa-facebook-f"></i>
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-outline-light w-100">
+                                    <i class="fab fa-github"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Highlight -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-shield-alt fa-2x mb-2 text-primary"></i>
+                        <h6 class="text-light">Secure</h6>
+                        <small class="text-light opacity-75">Your data is protected</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-bolt fa-2x mb-2 text-warning"></i>
+                        <h6 class="text-light">Fast</h6>
+                        <small class="text-light opacity-75">Real-time processing</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-chart-line fa-2x mb-2 text-success"></i>
+                        <h6 class="text-light">Analytics</h6>
+                        <small class="text-light opacity-75">Detailed insights</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.icon-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glass-input {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    padding: 12px 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1) !important;
+}
+
+.glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.form-check-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.form-check-input:checked {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divider-text {
+    padding: 0 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Animation for form */
+.card {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 2rem !important;
+    }
+    
+    .feature-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const passwordError = document.getElementById('passwordError');
+
+    function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.classList.add('is-invalid');
+            passwordError.style.display = 'block';
+            return false;
+        } else {
+            confirmPassword.classList.remove('is-invalid');
+            passwordError.style.display = 'none';
+            return true;
+        }
+    }
+
+    confirmPassword.addEventListener('input', validatePassword);
+    password.addEventListener('input', validatePassword);
+
+    form.addEventListener('submit', function(e) {
+        if (!validatePassword()) {
+            e.preventDefault();
+            // Add shake animation to indicate error
+            confirmPassword.classList.add('shake');
+            setTimeout(() => {
+                confirmPassword.classList.remove('shake');
+            }, 500);
+        }
+    });
+
+    // Add real-time password strength indicator
+    password.addEventListener('input', function() {
+        const strengthIndicator = document.getElementById('passwordStrength');
+        if (!strengthIndicator) {
+            const strengthDiv = document.createElement('div');
+            strengthDiv.id = 'passwordStrength';
+            strengthDiv.className = 'mt-2';
+            password.parentNode.appendChild(strengthDiv);
+        }
+        
+        const strength = calculatePasswordStrength(password.value);
+        updateStrengthIndicator(strength);
+    });
+
+    function calculatePasswordStrength(pass) {
+        let strength = 0;
+        if (pass.length >= 6) strength += 1;
+        if (pass.length >= 8) strength += 1;
+        if (/[A-Z]/.test(pass)) strength += 1;
+        if (/[0-9]/.test(pass)) strength += 1;
+        if (/[^A-Za-z0-9]/.test(pass)) strength += 1;
+        return strength;
+    }
+
+    function updateStrengthIndicator(strength) {
+        const indicator = document.getElementById('passwordStrength');
+        const colors = ['#ff4757', '#ffa502', '#2ed573', '#2ed573', '#2ed573'];
+        const texts = ['Very Weak', 'Weak', 'Good', 'Strong', 'Very Strong'];
+        
+        indicator.innerHTML = `
+            <div class="progress mb-1" style="height: 4px;">
+                <div class="progress-bar" style="width: ${strength * 20}%; background: ${colors[strength]}"></div>
+            </div>
+            <small style="color: ${colors[strength]}">${texts[strength]}</small>
+        `;
+    }
+});
+
+// Add CSS for shake animation
+const style = document.createElement('style');
+style.textContent = `
+    .shake {
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .progress {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 2px;
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %}Movement Tracking{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card glass-effect">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-running me-2"></i>Head Movement Tracking
+                        </h2>
+                        <p class="text-light">Real-time head pose estimation using OpenCV</p>
+                    </div>
+
+                    <!-- Status Display -->
+                    <div class="status-container mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stat-card mb-3">
+                                    <h6 class="stat-label">Detection Status</h6>
+                                    <div class="stat-number" id="detectionStatus">Ready</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card mb-3">
+                                    <h6 class="stat-label">Session ID</h6>
+                                    <div class="stat-number" id="sessionId">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Preview Placeholder -->
+                    <div class="camera-preview mb-4">
+                        <div class="preview-placeholder">
+                            <i class="fas fa-window-restore fa-5x mb-3 opacity-50"></i>
+                            <h5>OpenCV Window</h5>
+                            <p class="text-light">Head movement detection will open in a separate window</p>
+                        </div>
+                    </div>
+
+                    <!-- Single Start Button -->
+                    <div class="control-panel mb-4">
+                        <button class="btn btn-success btn-lg" onclick="startMovementDetection()" id="startBtn">
+                            <i class="fas fa-play-circle me-2"></i>Start Movement Detection
+                        </button>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="instructions alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Important Instructions:</h6>
+                        <ul class="mb-0 text-start">
+                            <li>Click "Start Movement Detection" to open the OpenCV window</li>
+                            <li>The detection will run in a separate desktop window</li>
+                            <li><strong>Press <kbd>Q</kbd> in the OpenCV window to stop detection</strong></li>
+                            <li><strong>Press <kbd>R</kbd> in the OpenCV window to recalibrate</strong></li>
+                            <li>Ensure camera permissions are granted</li>
+                            <li>Keep your face clearly visible for accurate head pose estimation</li>
+                            <li>Look straight at the camera during initial calibration</li>
+                            <li>Move your head slowly for best results</li>
+                        </ul>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="features mt-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="feature-item text-center">
+                                    <i class="fas fa-arrows-alt-h fa-2x mb-2 text-primary"></i>
+                                    <h6>6 Directions</h6>
+                                    <small class="text-light">Left, Right, Up, Down, Diagonal</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item text-center">
+                                    <i class="fas fa-bullseye fa-2x mb-2 text-warning"></i>
+                                    <h6>Real-time</h6>
+                                    <small class="text-light">Instant head pose estimation</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item text-center">
+                                    <i class="fas fa-sliders-h fa-2x mb-2 text-success"></i>
+                                    <h6>Calibration</h6>
+                                    <small class="text-light">Automatic neutral position calibration</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.camera-preview {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 3rem;
+    margin: 2rem 0;
+}
+
+.preview-placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4ecdc4;
+}
+
+.control-panel {
+    padding: 1.5rem;
+}
+
+.instructions {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+.instructions ul {
+    padding-left: 1.5rem;
+}
+
+.instructions li {
+    margin-bottom: 0.5rem;
+}
+
+.feature-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0.5rem 0;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn {
+    padding: 15px 40px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.status-active {
+    color: #4ecdc4;
+    animation: pulse 2s infinite;
+}
+
+.status-inactive {
+    color: #ff6b6b;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let detectionProcess = null;
+let sessionId = null;
+
+function startMovementDetection() {
+    const startBtn = document.getElementById('startBtn');
+    const statusElement = document.getElementById('detectionStatus');
+    const sessionIdElement = document.getElementById('sessionId');
+    
+    // Update UI
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
+    statusElement.textContent = 'Starting...';
+    statusElement.className = 'stat-number status-active';
+    
+    // Start the movement detection process
+    fetch('/movement/start', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin' // Include cookies for session
+    })
+    .then(response => {
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            sessionId = data.session_id;
+            sessionIdElement.textContent = sessionId;
+            statusElement.textContent = 'Running - Press Q to stop';
+            
+            // Show success message
+            showNotification('Head movement detection started! Look for the OpenCV window. Press Q to stop, R to recalibrate.', 'success');
+            
+            // Check detection status periodically
+            detectionProcess = setInterval(checkDetectionStatus, 3000);
+            
+        } else {
+            throw new Error(data.message || 'Failed to start detection');
+        }
+    })
+    .catch(error => {
+        console.error('Error starting detection:', error);
+        statusElement.textContent = 'Error';
+        statusElement.className = 'stat-number status-inactive';
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Movement Detection';
+        showNotification('Failed to start movement detection: ' + error.message, 'error');
+    });
+}
+
+function checkDetectionStatus() {
+    if (!sessionId) return;
+    
+    fetch('/movement/check_status?session_id=' + sessionId, {
+        credentials: 'same-origin' // Include cookies for session
+    })
+    .then(response => {
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const statusElement = document.getElementById('detectionStatus');
+        const startBtn = document.getElementById('startBtn');
+        
+        if (data.status === 'running' || data.status === 'starting') {
+            // Detection is still running
+            statusElement.textContent = 'Running - Press Q to stop';
+        } else if (data.status === 'completed' || data.status === 'stopping') {
+            // Detection has stopped
+            statusElement.textContent = 'Completed';
+            statusElement.className = 'stat-number';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Movement Detection';
+            
+            if (detectionProcess) {
+                clearInterval(detectionProcess);
+                detectionProcess = null;
+            }
+            
+            showNotification('Head movement detection completed!', 'success');
+        } else if (data.status === 'error') {
+            // Error occurred
+            statusElement.textContent = 'Error';
+            statusElement.className = 'stat-number status-inactive';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Movement Detection';
+            
+            if (detectionProcess) {
+                clearInterval(detectionProcess);
+                detectionProcess = null;
+            }
+            
+            showNotification('Error in movement detection: ' + (data.error || 'Unknown error'), 'error');
+        } else if (data.status === 'not_found') {
+            // Session not found (probably closed)
+            statusElement.textContent = 'Session Ended';
+            statusElement.className = 'stat-number';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Start Movement Detection';
+            
+            if (detectionProcess) {
+                clearInterval(detectionProcess);
+                detectionProcess = null;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error checking status:', error);
+    });
+}
+
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '1000';
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Movement Detection page loaded');
+});
+
+// Clean up when leaving page
+window.addEventListener('beforeunload', function() {
+    if (detectionProcess) {
+        clearInterval(detectionProcess);
+    }
+});
+</script>
+{% endblock %}

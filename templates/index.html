@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center fade-in">
+                <h1 class="display-3 fw-bold mb-4">Advanced AI Behavior Analysis</h1>
+                <p class="lead mb-5">Revolutionary system for emotion detection, movement tracking, and activity analysis using cutting-edge computer vision and machine learning.</p>
+                {% if not session.user_id %}
+                <a href="{{ url_for('register') }}" class="btn btn-gradient btn-lg me-3">Get Started</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login</a>
+                {% else %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-gradient btn-lg">Go to Dashboard</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Image Slideshow -->
+<section class="container my-5">
+    <div class="slideshow-container">
+        <div class="slide active" style="background-image: url('{{ url_for('static', filename='images/slide1.jpg') }}')"></div>
+        <div class="slide" style="background-image: url('{{ url_for('static', filename='images/slide2.jpg') }}')"></div>
+        <div class="slide" style="background-image: url('{{ url_for('static', filename='images/slide3.jpg') }}')"></div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-smile fa-3x mb-3" style="color: #4ecdc4;"></i>
+                    <h4 class="card-title">Emotion Detection</h4>
+                    <p class="card-text">Real-time facial emotion analysis using advanced deep learning models.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> Multiple input sources</li>
+                        <li><i class="fas fa-check text-success"></i> Real-time processing</li>
+                        <li><i class="fas fa-check text-success"></i> Detailed analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-running fa-3x mb-3" style="color: #feca57;"></i>
+                    <h4 class="card-title">Movement Tracking</h4>
+                    <p class="card-text">Precise head movement and orientation detection with 3D pose estimation.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> 6-direction detection</li>
+                        <li><i class="fas fa-check text-success"></i> Real-time tracking</li>
+                        <li><i class="fas fa-check text-success"></i> Calibration support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-user-check fa-3x mb-3" style="color: #ff6b6b;"></i>
+                    <h4 class="card-title">Activity Detection</h4>
+                    <p class="card-text">Human posture and activity recognition for daily life monitoring.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> Multiple activities</li>
+                        <li><i class="fas fa-check text-success"></i> Pose estimation</li>
+                        <li><i class="fas fa-check text-success"></i> Fall detection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="container my-5">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">99%</div>
+            <div class="stat-label">Accuracy</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">50ms</div>
+            <div class="stat-label">Processing Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">7+</div>
+            <div class="stat-label">Emotions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Monitoring</div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Slideshow functionality
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    
+    function showSlide(n) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }
+    
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+    
+    // Change slide every 5 seconds
+    setInterval(nextSlide, 5000);
+</script>
+{% endblock %}
